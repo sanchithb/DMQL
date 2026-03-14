@@ -1,12 +1,3 @@
--- ============================================
--- Escape Room ERP Database - Schema Creation
--- CSE 4/560 DMQL Project
--- ============================================
--- Run this FIRST before loading insert_data.sql
--- Target: PostgreSQL
--- ============================================
-
--- Drop tables in reverse dependency order (if re-creating)
 DROP TABLE IF EXISTS session_clues CASCADE;
 DROP TABLE IF EXISTS session_employees CASCADE;
 DROP TABLE IF EXISTS employee_leaves CASCADE;
@@ -20,10 +11,6 @@ DROP TABLE IF EXISTS games CASCADE;
 DROP TABLE IF EXISTS employees CASCADE;
 DROP TABLE IF EXISTS customers CASCADE;
 
-
--- ============================================
--- 1. Customers
--- ============================================
 CREATE TABLE customers (
     customer_id    SERIAL       PRIMARY KEY,
     first_name     TEXT         NOT NULL,
@@ -33,10 +20,6 @@ CREATE TABLE customers (
     created_at     TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
-
--- ============================================
--- 2. Employees
--- ============================================
 CREATE TABLE employees (
     employee_id    SERIAL         PRIMARY KEY,
     name           TEXT           NOT NULL,
@@ -48,10 +31,6 @@ CREATE TABLE employees (
                                  CHECK (hire_date <= CURRENT_DATE)
 );
 
-
--- ============================================
--- 3. Games
--- ============================================
 CREATE TABLE games (
     game_id           SERIAL    PRIMARY KEY,
     game_name         TEXT      NOT NULL,
@@ -63,10 +42,6 @@ CREATE TABLE games (
                                CHECK (max_players > 0)
 );
 
-
--- ============================================
--- 4. Rooms
--- ============================================
 CREATE TABLE rooms (
     room_id      SERIAL    PRIMARY KEY,
     room_name    TEXT       NOT NULL UNIQUE,
@@ -76,16 +51,6 @@ CREATE TABLE rooms (
                             REFERENCES games(game_id)
                             ON DELETE RESTRICT
 );
-
-
--- ============================================
--- 5. Bookings
--- ============================================
--- NOTE: The CHECK (booking_date >= CURRENT_DATE) constraint is omitted here
--- because we load historical data. For production, uncomment the constraint
--- or add it after loading seed data:
---   ALTER TABLE bookings ADD CONSTRAINT bookings_booking_date_check
---   CHECK (booking_date >= CURRENT_DATE);
 
 CREATE TABLE bookings (
     booking_id    SERIAL    PRIMARY KEY,
@@ -102,10 +67,6 @@ CREATE TABLE bookings (
                             ON DELETE RESTRICT
 );
 
-
--- ============================================
--- 6. Game Sessions
--- ============================================
 CREATE TABLE game_sessions (
     session_id    SERIAL       PRIMARY KEY,
     booking_id    INT          NOT NULL UNIQUE
@@ -123,10 +84,6 @@ CREATE TABLE game_sessions (
     success       BOOLEAN      DEFAULT NULL
 );
 
-
--- ============================================
--- 7. Session Employees (Junction Table)
--- ============================================
 CREATE TABLE session_employees (
     session_id     INT    NOT NULL
                           REFERENCES game_sessions(session_id)
@@ -137,10 +94,6 @@ CREATE TABLE session_employees (
     PRIMARY KEY (session_id, employee_id)
 );
 
-
--- ============================================
--- 8. Clues
--- ============================================
 CREATE TABLE clues (
     clue_id        SERIAL    PRIMARY KEY,
     game_id        INT       NOT NULL
@@ -151,10 +104,6 @@ CREATE TABLE clues (
                              CHECK (time_penalty >= 0)
 );
 
-
--- ============================================
--- 9. Session Clues (Junction Table)
--- ============================================
 CREATE TABLE session_clues (
     session_id    INT          NOT NULL
                                REFERENCES game_sessions(session_id)
@@ -166,10 +115,6 @@ CREATE TABLE session_clues (
     PRIMARY KEY (session_id, clue_id)
 );
 
-
--- ============================================
--- 10. Payments
--- ============================================
 CREATE TABLE payments (
     payment_id       SERIAL          PRIMARY KEY,
     booking_id       INT             NOT NULL
@@ -184,10 +129,6 @@ CREATE TABLE payments (
     payment_time     TIMESTAMP       NOT NULL DEFAULT NOW()
 );
 
-
--- ============================================
--- 11. Salaries
--- ============================================
 CREATE TABLE salaries (
     salary_id      SERIAL          PRIMARY KEY,
     employee_id    INT             NOT NULL
@@ -201,10 +142,6 @@ CREATE TABLE salaries (
     UNIQUE (employee_id, month)
 );
 
-
--- ============================================
--- 12. Employee Leaves
--- ============================================
 CREATE TABLE employee_leaves (
     leave_id       SERIAL    PRIMARY KEY,
     employee_id    INT       NOT NULL
@@ -216,10 +153,6 @@ CREATE TABLE employee_leaves (
     reason         TEXT
 );
 
-
--- ============================================
--- Verification: Check all tables were created
--- ============================================
 SELECT table_name
 FROM information_schema.tables
 WHERE table_schema = 'public'
