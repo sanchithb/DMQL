@@ -1,4 +1,3 @@
--- customers (500 rows)
 INSERT INTO customers (customer_id, first_name, last_name, email, phone, created_at) VALUES
   (1, 'Danielle', 'Johnson', 'danielle.johnson1@gmail.com', NULL, '2024-10-08 12:15:00'),
   (2, 'Joshua', 'Walker', 'joshua.walker2@yahoo.com', '+1-892-858-9935', '2024-03-30 18:45:00'),
@@ -509,7 +508,6 @@ INSERT INTO customers (customer_id, first_name, last_name, email, phone, created
   (499, 'Mitchell', 'Ramos', 'mitchell.ramos499@icloud.com', '+1-539-728-4300', '2024-05-13 14:15:00'),
   (500, 'Stephanie', 'Foley', 'stephanie.foley500@outlook.com', NULL, '2024-05-31 18:15:00');
 
--- employees (30 rows)
 INSERT INTO employees (employee_id, name, role, hourly_rate, hire_date) VALUES
   (1, 'Michael Stephens', 'Manager', 37.7, '2024-01-18'),
   (2, 'Heather Sanders', 'Admin', 37.47, '2024-03-21'),
@@ -542,7 +540,6 @@ INSERT INTO employees (employee_id, name, role, hourly_rate, hire_date) VALUES
   (29, 'Jeffery Ortega', 'GameMaster', 20.64, '2022-04-20'),
   (30, 'Christian Leblanc', 'GameMaster', 17.67, '2023-01-25');
 
--- games (15 rows)
 INSERT INTO games (game_id, game_name, difficulty_level, duration_minutes, max_players) VALUES
   (1, 'The Haunted Mansion', 4, 90, 7),
   (2, 'Prison Break', 5, 60, 7),
@@ -583,7 +580,6 @@ INSERT INTO rooms (room_id, room_name, capacity, game_id) VALUES
   (19, 'Greenhouse', 6, 2),
   (20, 'Archive', 8, 15);
 
--- bookings (800 rows)
 INSERT INTO bookings (booking_id, customer_id, booking_date, num_players, status, game_id) VALUES
   (1, 460, '2025-01-16', 3, 'COMPLETED', 1),
   (2, 144, '2025-05-18', 6, 'COMPLETED', 14),
