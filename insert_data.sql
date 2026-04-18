@@ -4576,7 +4576,8 @@ INSERT INTO employee_leaves (leave_id, employee_id, start_date, end_date, reason
   (39, 6, '2025-03-16', '2025-03-18', 'Vacation'),
   (40, 19, '2025-06-18', '2025-06-23', 'Wedding');
 
-Reset sequences to max ID + 1SELECT setval(pg_get_serial_sequence('customers', 'customer_id'), (SELECT MAX(customer_id) FROM customers));
+-- Reset sequences to max ID + 1
+SELECT setval(pg_get_serial_sequence('customers', 'customer_id'), (SELECT MAX(customer_id) FROM customers));
 SELECT setval(pg_get_serial_sequence('employees', 'employee_id'), (SELECT MAX(employee_id) FROM employees));
 SELECT setval(pg_get_serial_sequence('games', 'game_id'), (SELECT MAX(game_id) FROM games));
 SELECT setval(pg_get_serial_sequence('rooms', 'room_id'), (SELECT MAX(room_id) FROM rooms));
