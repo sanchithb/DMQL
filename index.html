@@ -1,0 +1,3424 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Escape Room ERP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f8f7f5;
+        --surface: #ffffff;
+        --surface2: #f2f1ef;
+        --border: #e5e3e0;
+        --border-strong: #c8c5c0;
+        --text-primary: #1a1917;
+        --text-secondary: #6b6863;
+        --text-muted: #9b9895;
+        --accent: #1a1917;
+        --accent-hover: #000000;
+        --green: #16a34a;
+        --green-bg: #f0fdf4;
+        --red: #dc2626;
+        --red-bg: #fef2f2;
+        --yellow: #d97706;
+        --yellow-bg: #fffbeb;
+        --blue: #2563eb;
+        --blue-bg: #eff6ff;
+        --purple: #7c3aed;
+        --purple-bg: #f5f3ff;
+        --orange: #ea580c;
+        --orange-bg: #fff7ed;
+        --shadow-sm:
+          0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+        --shadow-lg:
+          0 16px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+        --radius: 12px;
+        --radius-sm: 8px;
+        --radius-lg: 16px;
+        --sidebar-w: 240px;
+        --font-display: "Syne", sans-serif;
+        --font-body: "DM Sans", sans-serif;
+        --font-mono: "DM Mono", monospace;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: var(--font-body);
+        background: var(--bg);
+        color: var(--text-primary);
+        font-size: 14px;
+        line-height: 1.5;
+        overflow-x: hidden;
+      }
+
+      /* ── Layout ── */
+      #app {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ── Sidebar ── */
+      .sidebar {
+        width: var(--sidebar-w);
+        min-height: 100vh;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 100;
+        box-shadow: 2px 0 16px rgba(0, 0, 0, 0.04);
+      }
+      .sidebar-logo {
+        padding: 24px 20px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-icon {
+        width: 34px;
+        height: 34px;
+        background: var(--accent);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: white;
+        font-weight: 700;
+        font-family: var(--font-display);
+        flex-shrink: 0;
+      }
+      .logo-text {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 15px;
+        line-height: 1.2;
+      }
+      .logo-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 400;
+      }
+      .sidebar-nav {
+        flex: 1;
+        padding: 12px 10px;
+        overflow-y: auto;
+      }
+      .nav-section-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        padding: 12px 10px 6px;
+        margin-top: 4px;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 10px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 13.5px;
+        font-weight: 500;
+        transition: all 0.15s;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 2px;
+      }
+      .nav-item:hover {
+        background: var(--surface2);
+        color: var(--text-primary);
+      }
+      .nav-item.active {
+        background: var(--accent);
+        color: white;
+      }
+      .nav-item .icon {
+        font-size: 15px;
+        width: 18px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .sidebar-footer {
+        padding: 14px 16px;
+        border-top: 1px solid var(--border);
+      }
+      .db-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        background: var(--surface2);
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+      .db-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--green);
+        flex-shrink: 0;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      /* ── Main Content ── */
+      .main {
+        margin-left: var(--sidebar-w);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      .topbar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0 28px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .topbar-title {
+        font-family: var(--font-display);
+        font-size: 17px;
+        font-weight: 700;
+      }
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .content {
+        padding: 28px;
+        flex: 1;
+      }
+
+      /* ── Cards ── */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        box-shadow: var(--shadow-sm);
+      }
+      .card-title {
+        font-family: var(--font-display);
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: var(--text-primary);
+      }
+
+      /* ── Stat Cards ── */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        overflow: hidden;
+        transition:
+          box-shadow 0.2s,
+          transform 0.2s;
+      }
+      .stat-card:hover {
+        box-shadow: var(--shadow);
+        transform: translateY(-1px);
+      }
+      .stat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        margin-bottom: 12px;
+      }
+      .stat-val {
+        font-family: var(--font-display);
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        font-weight: 500;
+      }
+      .stat-trend {
+        font-size: 12px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .trend-up {
+        color: var(--green);
+      }
+      .trend-dn {
+        color: var(--red);
+      }
+
+      /* ── Tables ── */
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead th {
+        background: var(--surface2);
+        padding: 11px 14px;
+        text-align: left;
+        font-size: 11.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        white-space: nowrap;
+        border-bottom: 1px solid var(--border);
+      }
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.1s;
+      }
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: var(--surface2);
+      }
+      tbody td {
+        padding: 12px 14px;
+        font-size: 13.5px;
+        color: var(--text-primary);
+        vertical-align: middle;
+      }
+
+      /* ── Badges ── */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+      .badge-green {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .badge-red {
+        background: var(--red-bg);
+        color: var(--red);
+      }
+      .badge-yellow {
+        background: var(--yellow-bg);
+        color: var(--yellow);
+      }
+      .badge-blue {
+        background: var(--blue-bg);
+        color: var(--blue);
+      }
+      .badge-purple {
+        background: var(--purple-bg);
+        color: var(--purple);
+      }
+      .badge-gray {
+        background: var(--surface2);
+        color: var(--text-secondary);
+      }
+      .badge-orange {
+        background: var(--orange-bg);
+        color: var(--orange);
+      }
+
+      /* ── Buttons ── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.15s;
+        font-family: var(--font-body);
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      .btn-secondary {
+        background: var(--surface2);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+      }
+      .btn-secondary:hover {
+        background: var(--border);
+      }
+      .btn-danger {
+        background: var(--red-bg);
+        color: var(--red);
+        border: 1px solid #fecaca;
+      }
+      .btn-danger:hover {
+        background: #fee2e2;
+      }
+      .btn-sm {
+        padding: 6px 11px;
+        font-size: 12px;
+      }
+      .btn-icon {
+        padding: 8px;
+        width: 34px;
+        height: 34px;
+        justify-content: center;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ── Forms ── */
+      .form-grid {
+        display: grid;
+        gap: 16px;
+      }
+      .form-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .form-grid-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .field-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .field-input,
+      .field-select,
+      .field-textarea {
+        padding: 9px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        font-family: var(--font-body);
+        background: var(--surface);
+        color: var(--text-primary);
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+        width: 100%;
+      }
+      .field-input:focus,
+      .field-select:focus,
+      .field-textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(26, 25, 23, 0.07);
+      }
+      .field-textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      /* ── Pagination ── */
+      .pagination {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 0 0;
+      }
+      .page-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        transition: all 0.15s;
+      }
+      .page-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .page-btn.active {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+      .page-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .page-info {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        margin-left: 8px;
+      }
+
+      /* ── Filters Bar ── */
+      .filters-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px;
+        background: var(--surface2);
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+      .search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 200px;
+        max-width: 320px;
+      }
+      .search-icon {
+        position: absolute;
+        left: 11px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 14px;
+        pointer-events: none;
+      }
+      .search-input {
+        padding: 8px 12px 8px 34px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        background: var(--surface);
+        width: 100%;
+        font-family: var(--font-body);
+      }
+      .search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .filter-select {
+        padding: 8px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        background: var(--surface);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        cursor: pointer;
+      }
+      .filter-select:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+
+      /* ── Modal ── */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+      }
+      .modal {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        width: 100%;
+        max-width: 520px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-lg);
+        animation: modalIn 0.2s ease;
+      }
+      .modal-lg {
+        max-width: 720px;
+      }
+      .modal-xl {
+        max-width: 900px;
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+      }
+      .modal-title {
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .modal-footer {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+      }
+
+      /* ── Tabs ── */
+      .tab-bar {
+        display: flex;
+        gap: 2px;
+        padding: 4px;
+        background: var(--surface2);
+        border-radius: var(--radius-sm);
+        width: fit-content;
+        margin-bottom: 20px;
+      }
+      .tab-btn {
+        padding: 7px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        transition: all 0.15s;
+        font-family: var(--font-body);
+      }
+      .tab-btn.active {
+        background: var(--surface);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* ── Page Headers ── */
+      .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+      .page-title {
+        font-family: var(--font-display);
+        font-size: 22px;
+        font-weight: 800;
+      }
+      .page-sub {
+        color: var(--text-muted);
+        font-size: 13px;
+        margin-top: 2px;
+      }
+
+      /* ── Analytics Charts (CSS-based bars) ── */
+      .bar-chart {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .bar-label {
+        width: 120px;
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        text-align: right;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-shrink: 0;
+      }
+      .bar-track {
+        flex: 1;
+        height: 22px;
+        background: var(--surface2);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        align-items: center;
+        padding-right: 8px;
+        justify-content: flex-end;
+      }
+      .bar-fill span {
+        font-size: 11px;
+        font-weight: 600;
+        color: white;
+        white-space: nowrap;
+      }
+
+      /* ── Query Playground ── */
+      .query-editor {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        background: #1a1917;
+        color: #e5e3e0;
+        border: 1px solid #333;
+        border-radius: var(--radius);
+        padding: 16px;
+        min-height: 160px;
+        resize: vertical;
+        width: 100%;
+        outline: none;
+        line-height: 1.6;
+      }
+      .query-result-table th {
+        background: #1a1917;
+        color: #9b9895;
+        border-bottom: 1px solid #333;
+      }
+      .query-result-table tbody tr:hover {
+        background: var(--surface2);
+      }
+
+      /* ── Misc ── */
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 16px 0;
+      }
+      .text-muted {
+        color: var(--text-muted);
+      }
+      .text-small {
+        font-size: 12px;
+      }
+      .mt-4 {
+        margin-top: 16px;
+      }
+      .gap-12 {
+        gap: 12px;
+      }
+      .flex {
+        display: flex;
+      }
+      .flex-col {
+        flex-direction: column;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .justify-between {
+        justify-content: space-between;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+      }
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        color: var(--text-muted);
+        flex-direction: column;
+        gap: 12px;
+      }
+      .spin {
+        width: 28px;
+        height: 28px;
+        border: 2.5px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+        gap: 10px;
+      }
+      .empty-icon {
+        font-size: 36px;
+        margin-bottom: 4px;
+      }
+      .toast {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 9999;
+        background: var(--accent);
+        color: white;
+        padding: 12px 18px;
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        font-weight: 500;
+        box-shadow: var(--shadow-lg);
+        animation: toastIn 0.2s ease;
+        max-width: 320px;
+      }
+      .toast.error {
+        background: var(--red);
+      }
+      .toast.success {
+        background: var(--green);
+      }
+      @keyframes toastIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .confirm-dialog {
+        max-width: 380px;
+      }
+      .mini-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .mini-bar-track {
+        flex: 1;
+        height: 6px;
+        background: var(--surface2);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .mini-bar-fill {
+        height: 100%;
+        border-radius: 3px;
+        background: var(--accent);
+      }
+      .donut-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .donut-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .donut-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .schema-tree {
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+      .schema-table-name {
+        font-weight: 600;
+        color: var(--accent);
+        padding: 4px 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .schema-col {
+        padding: 2px 0 2px 16px;
+        color: var(--text-secondary);
+        display: flex;
+        gap: 8px;
+      }
+      .schema-col-type {
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      // ── Constants ─────────────────────────────────────────────────────────────────
+      const API = "http://localhost:8000";
+
+      // ── State ─────────────────────────────────────────────────────────────────────
+      let state = {
+        tab: "dashboard",
+        toast: null,
+        modal: null,
+        confirmDialog: null,
+      };
+
+      // ── Utils ────────────────────────────────────────────────────────────────────
+      function fmt(n) {
+        return Number(n || 0).toLocaleString();
+      }
+      function fmtMoney(n) {
+        return (
+          "$" +
+          Number(n || 0).toLocaleString("en", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        );
+      }
+      function fmtDate(d) {
+        if (!d) return "—";
+        return new Date(d).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+      function fmtTime(d) {
+        if (!d) return "—";
+        return new Date(d).toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      async function api(path, opts = {}) {
+        try {
+          const r = await fetch(API + path, {
+            headers: { "Content-Type": "application/json", ...opts.headers },
+            ...opts,
+            body: opts.body ? JSON.stringify(opts.body) : undefined,
+          });
+          if (!r.ok) {
+            const e = await r.json();
+            throw new Error(e.detail || "Request failed");
+          }
+          return r.json();
+        } catch (e) {
+          showToast(e.message, "error");
+          throw e;
+        }
+      }
+
+      function showToast(msg, type = "success") {
+        state.toast = { msg, type };
+        render();
+        setTimeout(() => {
+          state.toast = null;
+          render();
+        }, 3500);
+      }
+
+      function openModal(content) {
+        state.modal = content;
+        render();
+      }
+      function closeModal() {
+        state.modal = null;
+        render();
+      }
+      function navigate(tab) {
+        state.tab = tab;
+        render(); // Render immediately to show loading spinner
+
+        // Trigger data loading based on tab
+        if (tab === "dashboard") loadDashboard();
+        if (tab === "customers") loadCustomers();
+        if (tab === "employees") loadEmployees();
+        if (tab === "bookings") loadBookings();
+        if (tab === "sessions") loadSessions();
+        if (tab === "payments") loadPayments();
+        if (tab === "hr") {
+          loadSalaries();
+          loadLeaves();
+        }
+        if (tab === "games") {
+          loadGames();
+          loadRooms();
+        }
+        if (tab === "clues") loadClues();
+      }
+
+      // ── Badge helpers ─────────────────────────────────────────────────────────────
+      function statusBadge(s) {
+        const map = {
+          CONFIRMED: "badge-blue",
+          CANCELLED: "badge-red",
+          COMPLETED: "badge-green",
+          SUCCESS: "badge-green",
+          FAILED: "badge-red",
+          PENDING: "badge-yellow",
+          GameMaster: "badge-purple",
+          Manager: "badge-blue",
+          Admin: "badge-orange",
+        };
+        return `<span class="badge ${map[s] || "badge-gray"}">${s}</span>`;
+      }
+
+      function diffBadge(d) {
+        const colors = [
+          "badge-green",
+          "badge-green",
+          "badge-yellow",
+          "badge-yellow",
+          "badge-orange",
+          "badge-red",
+        ];
+        const stars = "★".repeat(d) + "☆".repeat(5 - d);
+        return `<span class="badge ${colors[d] || "badge-gray"}" title="Difficulty ${d}/5">${stars}</span>`;
+      }
+
+      // ── Pagination component ───────────────────────────────────────────────────────
+      function renderPagination(page, total, limit, onPage) {
+        const totalPages = Math.max(1, Math.ceil(total / limit));
+        const from = Math.min((page - 1) * limit + 1, total);
+        const to = Math.min(page * limit, total);
+
+        let pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || Math.abs(i - page) <= 1)
+            pages.push(i);
+          else if (pages[pages.length - 1] !== "...") pages.push("...");
+        }
+
+        const btns = pages
+          .map((p) =>
+            p === "..."
+              ? `<span style="padding:0 4px;color:var(--text-muted)">…</span>`
+              : `<button class="page-btn ${p === page ? "active" : ""}" onclick="${onPage}(${p})" ${p === page ? "disabled" : ""}>${p}</button>`,
+          )
+          .join("");
+
+        return `<div class="pagination">
+    <button class="page-btn" onclick="${onPage}(${page - 1})" ${page <= 1 ? "disabled" : ""}>‹</button>
+    ${btns}
+    <button class="page-btn" onclick="${onPage}(${page + 1})" ${page >= totalPages ? "disabled" : ""}>›</button>
+    <span class="page-info">${from}–${to} of ${fmt(total)}</span>
+  </div>`;
+      }
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  DASHBOARD
+      // ══════════════════════════════════════════════════════════════════════════════
+      let dashData = null;
+      async function loadDashboard() {
+        try {
+          dashData = await api("/analytics/dashboard");
+          render();
+        } catch (e) {
+          dashData = { error: true };
+          render();
+        }
+      }
+
+      function renderDashboard() {
+        if (!dashData) {
+          loadDashboard();
+          return `<div class="loading"><div class="spin"></div><span>Loading dashboard…</span></div>`;
+        }
+        if (dashData.error)
+          return `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not connect to the database. Make sure the backend is running.</p></div>`;
+
+        const d = dashData;
+        const stats = [
+          {
+            icon: "💰",
+            label: "Total Revenue",
+            val: fmtMoney(d.total_revenue),
+            color: "var(--green-bg)",
+            trend: "SUCCESS payments",
+          },
+          {
+            icon: "📋",
+            label: "Total Bookings",
+            val: fmt(d.total_bookings),
+            color: "var(--blue-bg)",
+            trend: "All time",
+          },
+          {
+            icon: "👥",
+            label: "Active Customers",
+            val: fmt(d.active_customers),
+            color: "var(--purple-bg)",
+            trend: "Made ≥1 booking",
+          },
+          {
+            icon: "🏆",
+            label: "Escape Rate",
+            val: `${d.escape_success_rate}%`,
+            color: "var(--yellow-bg)",
+            trend: "Sessions escaped",
+          },
+        ];
+
+        const recentRows =
+          (d.recent_bookings || [])
+            .map(
+              (b) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${b.booking_id}</span></td>
+      <td>${b.customer}</td>
+      <td>${b.game_name}</td>
+      <td>${fmtDate(b.booking_date)}</td>
+      <td>${statusBadge(b.status)}</td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="5"><div class="empty-state" style="padding:20px">No bookings yet</div></td></tr>`;
+
+        const topGamesRows = (d.top_games || [])
+          .map(
+            (g, i) => `
+    <div class="bar-row">
+      <span class="bar-label">${g.game_name}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${Math.round(((g.total_bookings || 0) / Math.max(...(d.top_games || [{ total_bookings: 1 }]).map((x) => x.total_bookings || 1))) * 100)}%;background:var(--accent)">
+          <span>${g.total_bookings}</span>
+        </div>
+      </div>
+      <span style="font-size:12px;color:var(--text-muted);width:50px;text-align:right">${g.success_rate || 0}%</span>
+    </div>`,
+          )
+          .join("");
+
+        return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Escape Room ERP — Overview</div>
+      </div>
+      <button class="btn btn-secondary" onclick="dashData=null;render()">↺ Refresh</button>
+    </div>
+    <div class="stats-grid">
+      ${stats
+        .map(
+          (s) => `
+        <div class="stat-card">
+          <div class="stat-icon" style="background:${s.color}">${s.icon}</div>
+          <div class="stat-val">${s.val}</div>
+          <div class="stat-label">${s.label}</div>
+          <div class="stat-trend text-muted text-small">${s.trend}</div>
+        </div>`,
+        )
+        .join("")}
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Recent Bookings</div>
+        <div class="table-wrap">
+          <table><thead><tr><th>#ID</th><th>Customer</th><th>Game</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody>${recentRows}</tbody></table>
+        </div>
+        <button class="btn btn-secondary btn-sm" style="margin-top:12px" onclick="navigate('bookings')">View All Bookings →</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Top Games by Bookings</div>
+        <div class="bar-chart">${topGamesRows || '<div class="empty-state" style="padding:20px">No data</div>'}</div>
+        <div style="margin-top:16px;display:flex;align-items:center;gap:16px">
+          <span style="font-size:12px;color:var(--text-muted)">% = escape success rate</span>
+          <button class="btn btn-secondary btn-sm" onclick="navigate('analytics')">Full Analytics →</button>
+        </div>
+      </div>
+    </div>`;
+      }
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  CUSTOMERS
+      // ══════════════════════════════════════════════════════════════════════════════
+      let customersState = {
+        data: null,
+        total: 0,
+        page: 1,
+        limit: 20,
+        search: "",
+        loading: false,
+      };
+
+      async function loadCustomers() {
+        if (customersState.loading) return; // Prevent duplicate concurrent requests
+
+        customersState.loading = true;
+        render(); // Show the spinner
+
+        //   customersState.loading = true; render();
+        //   const params = new URLSearchParams({ page: customersState.page, limit: customersState.limit });
+        //   if (customersState.search) params.append('search', customersState.search);
+        //   const r = await api(`/customers?${params}`);
+        //   customersState.data = r.data; customersState.total = r.total;
+        //   customersState.loading = false; render();
+        try {
+          const params = new URLSearchParams({
+            page: customersState.page,
+            limit: customersState.limit,
+          });
+          if (customersState.search)
+            params.append("search", customersState.search);
+          const r = await api(`/customers?${params}`);
+          customersState.data = r.data;
+          customersState.total = r.total;
+        } finally {
+          customersState.loading = false;
+          render(); // Show the data
+        }
+      }
+
+      window.customersPage = function (p) {
+        customersState.page = p;
+        loadCustomers();
+      };
+      window.customersSearch = function (v) {
+        customersState.search = v;
+        customersState.page = 1;
+        loadCustomers();
+      };
+
+      function renderCustomers() {
+        //   if (!customersState.data) { loadCustomers(); return `<div class="loading"><div class="spin"></div><span>Loading customers…</span></div>`; }
+
+        if (customersState.loading) {
+          return `<div class="loading"><div class="spin"></div><span>Loading customers…</span></div>`;
+        }
+
+        if (!customersState.data)
+          return `<div class="empty-state">No data loaded.</div>`;
+
+        const rows =
+          customersState.data
+            .map(
+              (c) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${c.customer_id}</span></td>
+      <td><strong>${c.first_name} ${c.last_name}</strong></td>
+      <td><a href="mailto:${c.email}" style="color:var(--blue)">${c.email}</a></td>
+      <td>${c.phone || '<span class="text-muted">—</span>'}</td>
+      <td>${fmtDate(c.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="editCustomer(${c.customer_id})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCustomer(${c.customer_id},'${c.first_name} ${c.last_name}')">Delete</button>
+        </div>
+      </td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👥</div><p>No customers found</p></div></td></tr>`;
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">Customers</div><div class="page-sub">${fmt(customersState.total)} total customers</div></div>
+      <button class="btn btn-primary" onclick="openAddCustomer()">+ Add Customer</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="filters-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" placeholder="Search by name or email…" value="${customersState.search}"
+            oninput="customersSearch(this.value)" onkeydown="if(event.key==='Enter')customersSearch(this.value)"/>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="exportTable('customers')">↓ Export CSV</button>
+      </div>
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(customersState.page, customersState.total, customersState.limit, "customersPage")}</div>
+    </div>`;
+      }
+
+      window.openAddCustomer = function () {
+        openModal(`
+    <div class="modal-header">
+      <div class="modal-title">Add Customer</div>
+      <button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="field-group">
+        <label class="field-label">First Name *</label>
+        <input class="field-input" id="cf_first" placeholder="Emma"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Last Name *</label>
+        <input class="field-input" id="cf_last" placeholder="Johnson"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Email *</label>
+        <input class="field-input" id="cf_email" type="email" placeholder="emma@email.com"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Phone</label>
+        <input class="field-input" id="cf_phone" placeholder="555-0101"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddCustomer()">Add Customer</button>
+    </div>`);
+      };
+
+      window.submitAddCustomer = async function () {
+        const body = {
+          first_name: document.getElementById("cf_first").value,
+          last_name: document.getElementById("cf_last").value,
+          email: document.getElementById("cf_email").value,
+          phone: document.getElementById("cf_phone").value || null,
+        };
+        if (!body.first_name || !body.last_name || !body.email)
+          return showToast("Fill required fields", "error");
+        await api("/customers", { method: "POST", body });
+        showToast("Customer added!");
+        closeModal();
+        customersState.data = null;
+        loadCustomers();
+      };
+
+      window.editCustomer = async function (id) {
+        const c = await api(`/customers/${id}`);
+        openModal(`
+    <div class="modal-header">
+      <div class="modal-title">Edit Customer #${id}</div>
+      <button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="field-group"><label class="field-label">First Name</label><input class="field-input" id="ce_first" value="${c.first_name}"/></div>
+      <div class="field-group"><label class="field-label">Last Name</label><input class="field-input" id="ce_last" value="${c.last_name}"/></div>
+      <div class="field-group"><label class="field-label">Email</label><input class="field-input" id="ce_email" value="${c.email}"/></div>
+      <div class="field-group"><label class="field-label">Phone</label><input class="field-input" id="ce_phone" value="${c.phone || ""}"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitEditCustomer(${id})">Save Changes</button>
+    </div>`);
+      };
+
+      window.submitEditCustomer = async function (id) {
+        const body = {
+          first_name: document.getElementById("ce_first").value,
+          last_name: document.getElementById("ce_last").value,
+          email: document.getElementById("ce_email").value,
+          phone: document.getElementById("ce_phone").value || null,
+        };
+        await api(`/customers/${id}`, { method: "PUT", body });
+        showToast("Customer updated!");
+        closeModal();
+        customersState.data = null;
+        loadCustomers();
+      };
+
+      window.deleteCustomer = function (id, name) {
+        state.confirmDialog = {
+          title: "Delete Customer",
+          msg: `Are you sure you want to delete <strong>${name}</strong>? This action cannot be undone.`,
+          onConfirm: async () => {
+            await api(`/customers/${id}`, { method: "DELETE" });
+            showToast("Customer deleted");
+            state.confirmDialog = null;
+            customersState.data = null;
+            loadCustomers();
+          },
+          onCancel: () => {
+            state.confirmDialog = null;
+            render();
+          },
+        };
+        render();
+      };
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  EMPLOYEES
+      // ══════════════════════════════════════════════════════════════════════════════
+      let empState = {
+        data: null,
+        total: 0,
+        page: 1,
+        limit: 20,
+        search: "",
+        role: "",
+        loading: false,
+      };
+
+      async function loadEmployees() {
+        // Prevent overlapping requests if one is already in progress
+        if (empState.loading) return;
+
+        empState.loading = true;
+        render(); // Update UI to show spinner
+
+        try {
+          const params = new URLSearchParams({
+            page: empState.page,
+            limit: empState.limit,
+          });
+          if (empState.search) params.append("search", empState.search);
+          if (empState.role) params.append("role", empState.role);
+
+          const r = await api(`/employees?${params}`);
+          empState.data = r.data;
+          empState.total = r.total;
+        } catch (err) {
+          console.error("Failed to load employees", err);
+        } finally {
+          empState.loading = false;
+          render(); // Update UI to show data
+        }
+      }
+
+      window.empPage = (p) => {
+        empState.page = p;
+        loadEmployees();
+      };
+      window.empFilter = (field, val) => {
+        empState[field] = val;
+        empState.page = 1;
+        loadEmployees();
+      };
+
+      function renderEmployees() {
+        if (empState.loading) {
+          return `<div class="loading"><div class="spin"></div><span>Loading Staff...</span></div>`;
+        }
+
+        // 2. If we aren't loading but have no data, show an empty state
+        // (This handles the initial state before the first fetch completes)
+        if (!empState.data) {
+          return `<div class="empty-state">No data available.</div>`;
+        }
+
+        const rows =
+          empState.data
+            .map(
+              (e) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${e.employee_id}</span></td>
+      <td><strong>${e.name}</strong></td>
+      <td>${statusBadge(e.role)}</td>
+      <td>${fmtMoney(e.hourly_rate)}/hr</td>
+      <td>${fmtDate(e.hire_date)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="editEmployee(${e.employee_id})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${e.employee_id},'${e.name}')">Delete</button>
+        </div>
+      </td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👷</div><p>No employees found</p></div></td></tr>`;
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">Employees</div><div class="page-sub">${fmt(empState.total)} staff members</div></div>
+      <button class="btn btn-primary" onclick="openAddEmployee()">+ Add Employee</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="filters-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" placeholder="Search by name…" value="${empState.search}" oninput="empFilter('search',this.value)"/>
+        </div>
+        <select class="filter-select" onchange="empFilter('role',this.value)">
+          <option value="">All Roles</option>
+          <option value="GameMaster" ${empState.role === "GameMaster" ? "selected" : ""}>Game Master</option>
+          <option value="Manager" ${empState.role === "Manager" ? "selected" : ""}>Manager</option>
+          <option value="Admin" ${empState.role === "Admin" ? "selected" : ""}>Admin</option>
+        </select>
+      </div>
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Name</th><th>Role</th><th>Hourly Rate</th><th>Hire Date</th><th>Actions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(empState.page, empState.total, empState.limit, "empPage")}</div>
+    </div>`;
+      }
+
+      window.openAddEmployee = function () {
+        openModal(`
+    <div class="modal-header">
+      <div class="modal-title">Add Employee</div>
+      <button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="field-group" style="grid-column:1/-1"><label class="field-label">Full Name *</label><input class="field-input" id="ef_name" placeholder="Alex Torres"/></div>
+      <div class="field-group">
+        <label class="field-label">Role *</label>
+        <select class="field-select" id="ef_role">
+          <option value="GameMaster">Game Master</option>
+          <option value="Manager">Manager</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Hourly Rate ($) *</label><input class="field-input" id="ef_rate" type="number" step="0.01" placeholder="18.50"/></div>
+      <div class="field-group"><label class="field-label">Hire Date *</label><input class="field-input" id="ef_hire" type="date"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddEmployee()">Add Employee</button>
+    </div>`);
+      };
+
+      window.submitAddEmployee = async function () {
+        const body = {
+          name: document.getElementById("ef_name").value,
+          role: document.getElementById("ef_role").value,
+          hourly_rate: parseFloat(document.getElementById("ef_rate").value),
+          hire_date: document.getElementById("ef_hire").value,
+        };
+        if (!body.name || !body.hire_date || isNaN(body.hourly_rate))
+          return showToast("Fill all required fields", "error");
+        await api("/employees", { method: "POST", body });
+        showToast("Employee added!");
+        closeModal();
+        empState.data = null;
+        loadEmployees();
+      };
+
+      window.editEmployee = async function (id) {
+        const e = await api(`/employees/${id}`);
+        openModal(`
+    <div class="modal-header">
+      <div class="modal-title">Edit Employee #${id}</div>
+      <button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="field-group" style="grid-column:1/-1"><label class="field-label">Name</label><input class="field-input" id="ee_name" value="${e.name}"/></div>
+      <div class="field-group"><label class="field-label">Role</label>
+        <select class="field-select" id="ee_role">
+          <option value="GameMaster" ${e.role === "GameMaster" ? "selected" : ""}>Game Master</option>
+          <option value="Manager" ${e.role === "Manager" ? "selected" : ""}>Manager</option>
+          <option value="Admin" ${e.role === "Admin" ? "selected" : ""}>Admin</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Hourly Rate ($)</label><input class="field-input" id="ee_rate" type="number" step="0.01" value="${e.hourly_rate}"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitEditEmployee(${id})">Save</button>
+    </div>`);
+      };
+
+      window.submitEditEmployee = async function (id) {
+        const body = {
+          name: document.getElementById("ee_name").value,
+          role: document.getElementById("ee_role").value,
+          hourly_rate: parseFloat(document.getElementById("ee_rate").value),
+        };
+        await api(`/employees/${id}`, { method: "PUT", body });
+        showToast("Employee updated!");
+        closeModal();
+        empState.data = null;
+        loadEmployees();
+      };
+
+      window.deleteEmployee = function (id, name) {
+        state.confirmDialog = {
+          title: "Delete Employee",
+          msg: `Remove <strong>${name}</strong> from the system?`,
+          onConfirm: async () => {
+            await api(`/employees/${id}`, { method: "DELETE" });
+            showToast("Employee removed");
+            state.confirmDialog = null;
+            empState.data = null;
+            loadEmployees();
+          },
+          onCancel: () => {
+            state.confirmDialog = null;
+            render();
+          },
+        };
+        render();
+      };
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  GAMES & ROOMS
+      // ══════════════════════════════════════════════════════════════════════════════
+      let gamesState = {
+        data: null,
+        total: 0,
+        page: 1,
+        limit: 20,
+        diff: "",
+        loading: false,
+      };
+      let roomsState = {
+        data: null,
+        total: 0,
+        page: 1,
+        limit: 20,
+        loading: false,
+      };
+
+      async function loadGames() {
+        if (gamesState.loading) return;
+        gamesState.loading = true;
+        try {
+          const params = new URLSearchParams({
+            page: gamesState.page,
+            limit: gamesState.limit,
+          });
+          if (gamesState.diff) params.append("difficulty", gamesState.diff);
+          const r = await api(`/games?${params}`);
+          gamesState.data = r.data;
+          gamesState.total = r.total;
+        } finally {
+          gamesState.loading = false;
+          render();
+        }
+      }
+
+      async function loadRooms() {
+        if (roomsState.loading) return;
+        roomsState.loading = true;
+        try {
+          const params = new URLSearchParams({
+            page: roomsState.page,
+            limit: roomsState.limit,
+          });
+          const r = await api(`/rooms?${params}`);
+          roomsState.data = r.data;
+          roomsState.total = r.total;
+        } finally {
+          roomsState.loading = false;
+          render();
+        }
+      }
+
+      let gamesTab = "games";
+      window.setGamesTab = (t) => {
+        gamesTab = t;
+        render();
+      };
+      window.gamesPage = (p) => {
+        gamesState.page = p;
+        loadGames();
+      };
+      window.gamesFilter = (f, v) => {
+        gamesState[f] = v;
+        gamesState.page = 1;
+        loadGames();
+      };
+      window.roomsPage = (p) => {
+        roomsState.page = p;
+        loadRooms();
+      };
+
+      function renderGamesRooms() {
+        if (gamesState.loading || roomsState.loading) {
+          return `<div class="loading"><div class="spin"></div><span>Loading games & rooms…</span></div>`;
+        }
+        if (!gamesState.data) {
+          return `<div class="empty-state">No data available.</div>`;
+        }
+
+        const isGames = gamesTab === "games";
+
+        const gRows = (gamesState.data || [])
+          .map(
+            (g) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${g.game_id}</span></td>
+      <td><strong>${g.game_name}</strong></td>
+      <td>${diffBadge(g.difficulty_level)}</td>
+      <td>${g.duration_minutes} min</td>
+      <td>${g.max_players} players</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="editGame(${g.game_id})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteGame(${g.game_id},'${g.game_name}')">Delete</button>
+        </div>
+      </td>
+    </tr>`,
+          )
+          .join("");
+
+        const rRows = (roomsState.data || [])
+          .map(
+            (r) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${r.room_id}</span></td>
+      <td><strong>${r.room_name}</strong></td>
+      <td>${r.capacity} people</td>
+      <td>${r.game_name || "—"}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteRoom(${r.room_id})">Remove</button></td>
+    </tr>`,
+          )
+          .join("");
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">Games & Rooms</div><div class="page-sub">Manage escape room games and physical rooms</div></div>
+      <button class="btn btn-primary" onclick="isGames?openAddGame():openAddRoom(); var isGames='${gamesTab}'==='games'"
+        onclick="${gamesTab === "games" ? "openAddGame()" : "openAddRoom()"}">
+        + ${gamesTab === "games" ? "Add Game" : "Add Room"}
+      </button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn ${gamesTab === "games" ? "active" : ""}" onclick="setGamesTab('games')">🎮 Games (${gamesState.total})</button>
+      <button class="tab-btn ${gamesTab === "rooms" ? "active" : ""}" onclick="setGamesTab('rooms')">🚪 Rooms (${roomsState.total || "…"})</button>
+    </div>
+    ${
+      gamesTab === "games"
+        ? `
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="filters-bar">
+        <span style="font-size:13px;color:var(--text-secondary);font-weight:500">Filter by difficulty:</span>
+        ${[0, 1, 2, 3, 4, 5].map((d) => `<button class="btn btn-secondary btn-sm ${gamesState.diff == d && d ? "btn-primary" : ""}" onclick="gamesFilter('diff','${d || ""}');document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('btn-primary'));this.classList.toggle('btn-primary')">${d === 0 ? "All" : "★".repeat(d)}</button>`).join("")}
+      </div>
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Game Name</th><th>Difficulty</th><th>Duration</th><th>Max Players</th><th>Actions</th></tr></thead>
+          <tbody>${gRows || '<tr><td colspan="6"><div class="empty-state" style="padding:20px">No games found</div></td></tr>'}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(gamesState.page, gamesState.total, gamesState.limit, "gamesPage")}</div>
+    </div>`
+        : `
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="filters-bar">
+        <button class="btn btn-secondary btn-sm" onclick="openAddRoom()">+ Add Room</button>
+      </div>
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Room Name</th><th>Capacity</th><th>Assigned Game</th><th>Actions</th></tr></thead>
+          <tbody>${rRows || '<tr><td colspan="5"><div class="empty-state" style="padding:20px">No rooms found</div></td></tr>'}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(roomsState.page, roomsState.total || 0, roomsState.limit, "roomsPage")}</div>
+    </div>`
+    }`;
+      }
+
+      window.openAddGame = function () {
+        openModal(`
+    <div class="modal-header"><div class="modal-title">Add Game</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group"><label class="field-label">Game Name *</label><input class="field-input" id="gf_name" placeholder="The Haunted Mansion"/></div>
+      <div class="form-grid form-grid-3">
+        <div class="field-group"><label class="field-label">Difficulty (1-5) *</label><input class="field-input" id="gf_diff" type="number" min="1" max="5" placeholder="3"/></div>
+        <div class="field-group"><label class="field-label">Duration (min) *</label><input class="field-input" id="gf_dur" type="number" placeholder="60"/></div>
+        <div class="field-group"><label class="field-label">Max Players *</label><input class="field-input" id="gf_max" type="number" placeholder="8"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddGame()">Add Game</button>
+    </div>`);
+      };
+
+      window.submitAddGame = async function () {
+        const body = {
+          game_name: document.getElementById("gf_name").value,
+          difficulty_level: parseInt(document.getElementById("gf_diff").value),
+          duration_minutes: parseInt(document.getElementById("gf_dur").value),
+          max_players: parseInt(document.getElementById("gf_max").value),
+        };
+        if (!body.game_name) return showToast("Enter game name", "error");
+        await api("/games", { method: "POST", body });
+        showToast("Game added!");
+        closeModal();
+        gamesState.data = null;
+        loadGames();
+      };
+
+      window.editGame = async function (id) {
+        const g = await api(`/games?page=1&limit=100`);
+        const gm = g.data.find((x) => x.game_id === id);
+        if (!gm) return;
+        openModal(`
+    <div class="modal-header"><div class="modal-title">Edit Game #${id}</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group"><label class="field-label">Game Name</label><input class="field-input" id="ge_name" value="${gm.game_name}"/></div>
+      <div class="form-grid form-grid-3">
+        <div class="field-group"><label class="field-label">Difficulty</label><input class="field-input" id="ge_diff" type="number" min="1" max="5" value="${gm.difficulty_level}"/></div>
+        <div class="field-group"><label class="field-label">Duration (min)</label><input class="field-input" id="ge_dur" type="number" value="${gm.duration_minutes}"/></div>
+        <div class="field-group"><label class="field-label">Max Players</label><input class="field-input" id="ge_max" type="number" value="${gm.max_players}"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitEditGame(${id})">Save</button>
+    </div>`);
+      };
+
+      window.submitEditGame = async function (id) {
+        const body = {
+          game_name: document.getElementById("ge_name").value,
+          difficulty_level: parseInt(document.getElementById("ge_diff").value),
+          duration_minutes: parseInt(document.getElementById("ge_dur").value),
+          max_players: parseInt(document.getElementById("ge_max").value),
+        };
+        await api(`/games/${id}`, { method: "PUT", body });
+        showToast("Game updated!");
+        closeModal();
+        gamesState.data = null;
+        loadGames();
+      };
+
+      window.deleteGame = function (id, name) {
+        state.confirmDialog = {
+          title: "Delete Game",
+          msg: `Remove game <strong>${name}</strong>?`,
+          onConfirm: async () => {
+            await api(`/games/${id}`, { method: "DELETE" });
+            showToast("Game deleted");
+            state.confirmDialog = null;
+            gamesState.data = null;
+            loadGames();
+          },
+          onCancel: () => {
+            state.confirmDialog = null;
+            render();
+          },
+        };
+        render();
+      };
+
+      window.openAddRoom = async function () {
+        const games = await api("/lookup/games");
+        openModal(`
+    <div class="modal-header"><div class="modal-title">Add Room</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group"><label class="field-label">Room Name *</label><input class="field-input" id="rf_name" placeholder="Room A - Mansion"/></div>
+      <div class="form-grid form-grid-2">
+        <div class="field-group"><label class="field-label">Capacity *</label><input class="field-input" id="rf_cap" type="number" placeholder="8"/></div>
+        <div class="field-group"><label class="field-label">Assigned Game *</label>
+          <select class="field-select" id="rf_game">
+            ${games.map((g) => `<option value="${g.game_id}">${g.game_name}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddRoom()">Add Room</button>
+    </div>`);
+      };
+
+      window.submitAddRoom = async function () {
+        const body = {
+          room_name: document.getElementById("rf_name").value,
+          capacity: parseInt(document.getElementById("rf_cap").value),
+          game_id: parseInt(document.getElementById("rf_game").value),
+        };
+        if (!body.room_name) return showToast("Enter room name", "error");
+        await api("/rooms", { method: "POST", body });
+        showToast("Room added!");
+        closeModal();
+        roomsState.data = null;
+        loadRooms();
+      };
+
+      window.deleteRoom = function (id) {
+        state.confirmDialog = {
+          title: "Delete Room",
+          msg: "Remove this room?",
+          onConfirm: async () => {
+            await api(`/rooms/${id}`, { method: "DELETE" });
+            showToast("Room deleted");
+            state.confirmDialog = null;
+            roomsState.data = null;
+            loadRooms();
+          },
+          onCancel: () => {
+            state.confirmDialog = null;
+            render();
+          },
+        };
+        render();
+      };
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  BOOKINGS
+      // ══════════════════════════════════════════════════════════════════════════════
+      let bookingsState = {
+        data: null,
+        total: 0,
+        page: 1,
+        limit: 20,
+        status: "",
+        fromDate: "",
+        toDate: "",
+        gameId: "",
+        loading: false,
+      };
+
+      async function loadBookings() {
+        if (bookingsState.loading) return;
+        bookingsState.loading = true;
+        try {
+          const p = new URLSearchParams({
+            page: bookingsState.page,
+            limit: bookingsState.limit,
+          });
+          if (bookingsState.status) p.append("status", bookingsState.status);
+          if (bookingsState.fromDate)
+            p.append("from_date", bookingsState.fromDate);
+          if (bookingsState.toDate) p.append("to_date", bookingsState.toDate);
+          if (bookingsState.gameId) p.append("game_id", bookingsState.gameId);
+          const r = await api(`/bookings?${p}`);
+          bookingsState.data = r.data;
+          bookingsState.total = r.total;
+        } finally {
+          bookingsState.loading = false;
+          render();
+        }
+      }
+
+      window.bookingsPage = (p) => {
+        bookingsState.page = p;
+        loadBookings();
+      };
+      window.bookingsFilter = (f, v) => {
+        bookingsState[f] = v;
+        bookingsState.page = 1;
+        loadBookings();
+      };
+
+      function renderBookings() {
+        if (bookingsState.loading) {
+          return `<div class="loading"><div class="spin"></div><span>Loading bookings…</span></div>`;
+        }
+        if (!bookingsState.data)
+          return `<div class="empty-state">No data available.</div>`;
+
+        const rows =
+          bookingsState.data
+            .map(
+              (b) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${b.booking_id}</span></td>
+      <td><strong>${b.customer_name}</strong></td>
+      <td>${b.game_name}</td>
+      <td>${fmtDate(b.booking_date)}</td>
+      <td>${b.num_players} players</td>
+      <td>${statusBadge(b.status)}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${
+            b.status === "CONFIRMED"
+              ? `
+            <button class="btn btn-secondary btn-sm" onclick="updateBookingStatus(${b.booking_id},'COMPLETED')">✓ Complete</button>
+            <button class="btn btn-danger btn-sm" onclick="updateBookingStatus(${b.booking_id},'CANCELLED')">✕ Cancel</button>`
+              : ""
+          }
+          <button class="btn btn-danger btn-sm" onclick="deleteBooking(${b.booking_id})">🗑</button>
+        </div>
+      </td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><p>No bookings found</p></div></td></tr>`;
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">Bookings</div><div class="page-sub">${fmt(bookingsState.total)} total bookings</div></div>
+      <button class="btn btn-primary" onclick="openAddBooking()">+ New Booking</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="filters-bar">
+        <select class="filter-select" onchange="bookingsFilter('status',this.value)">
+          <option value="">All Status</option>
+          <option value="CONFIRMED" ${bookingsState.status === "CONFIRMED" ? "selected" : ""}>Confirmed</option>
+          <option value="COMPLETED" ${bookingsState.status === "COMPLETED" ? "selected" : ""}>Completed</option>
+          <option value="CANCELLED" ${bookingsState.status === "CANCELLED" ? "selected" : ""}>Cancelled</option>
+        </select>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:12px;color:var(--text-muted)">From:</span>
+          <input type="date" class="filter-select" value="${bookingsState.fromDate}" onchange="bookingsFilter('fromDate',this.value)"/>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:12px;color:var(--text-muted)">To:</span>
+          <input type="date" class="filter-select" value="${bookingsState.toDate}" onchange="bookingsFilter('toDate',this.value)"/>
+        </div>
+        ${
+          bookingsState.status || bookingsState.fromDate || bookingsState.toDate
+            ? `<button class="btn btn-secondary btn-sm" onclick="bookingsState.status='';bookingsState.fromDate='';bookingsState.toDate='';bookingsState.page=1;loadBookings()">Clear Filters</button>`
+            : ""
+        }
+      </div>
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Customer</th><th>Game</th><th>Date</th><th>Players</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(bookingsState.page, bookingsState.total, bookingsState.limit, "bookingsPage")}</div>
+    </div>`;
+      }
+
+      window.openAddBooking = async function () {
+        const [customers, games] = await Promise.all([
+          api("/lookup/customers"),
+          api("/lookup/games"),
+        ]);
+        openModal(`
+    <div class="modal-header"><div class="modal-title">New Booking</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group">
+        <label class="field-label">Customer *</label>
+        <select class="field-select" id="bf_cust">
+          <option value="">— Select Customer —</option>
+          ${customers.map((c) => `<option value="${c.customer_id}">${c.name} (${c.email})</option>`).join("")}
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Game *</label>
+        <select class="field-select" id="bf_game">
+          <option value="">— Select Game —</option>
+          ${games.map((g) => `<option value="${g.game_id}">${g.game_name}</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="field-group"><label class="field-label">Booking Date *</label><input class="field-input" id="bf_date" type="date"/></div>
+        <div class="field-group"><label class="field-label">Number of Players *</label><input class="field-input" id="bf_players" type="number" min="1" placeholder="4"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddBooking()">Create Booking</button>
+    </div>`);
+      };
+
+      window.submitAddBooking = async function () {
+        const body = {
+          customer_id: parseInt(document.getElementById("bf_cust").value),
+          game_id: parseInt(document.getElementById("bf_game").value),
+          booking_date: document.getElementById("bf_date").value,
+          num_players: parseInt(document.getElementById("bf_players").value),
+        };
+        if (!body.customer_id || !body.game_id || !body.booking_date)
+          return showToast("Fill all required fields", "error");
+        await api("/bookings", { method: "POST", body });
+        showToast("Booking created!");
+        closeModal();
+        bookingsState.data = null;
+        loadBookings();
+      };
+
+      window.updateBookingStatus = async function (id, status) {
+        await api(`/bookings/${id}/status`, {
+          method: "PATCH",
+          body: { status },
+        });
+        showToast(`Booking ${status.toLowerCase()}`);
+        bookingsState.data = null;
+        loadBookings();
+      };
+
+      window.deleteBooking = function (id) {
+        state.confirmDialog = {
+          title: "Delete Booking",
+          msg: `Delete booking #${id}? This cannot be undone.`,
+          onConfirm: async () => {
+            await api(`/bookings/${id}`, { method: "DELETE" });
+            showToast("Booking deleted");
+            state.confirmDialog = null;
+            bookingsState.data = null;
+            loadBookings();
+          },
+          onCancel: () => {
+            state.confirmDialog = null;
+            render();
+          },
+        };
+        render();
+      };
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  SESSIONS
+      // ══════════════════════════════════════════════════════════════════════════════
+      let sessionsState = {
+        data: null,
+        total: 0,
+        page: 1,
+        limit: 20,
+        gameId: "",
+        success: "",
+        loading: false,
+      };
+
+      async function loadSessions() {
+        if (sessionsState.loading) return;
+        sessionsState.loading = true;
+        try {
+          const p = new URLSearchParams({
+            page: sessionsState.page,
+            limit: sessionsState.limit,
+          });
+          if (sessionsState.gameId) p.append("game_id", sessionsState.gameId);
+          if (sessionsState.success !== "")
+            p.append("success", sessionsState.success);
+          const r = await api(`/sessions?${p}`);
+          sessionsState.data = r.data;
+          sessionsState.total = r.total;
+        } finally {
+          sessionsState.loading = false;
+          render();
+        }
+      }
+
+      window.sessionsPage = (p) => {
+        sessionsState.page = p;
+        loadSessions();
+      };
+      window.sessionsFilter = (f, v) => {
+        sessionsState[f] = v;
+        sessionsState.page = 1;
+        loadSessions();
+      };
+
+      function renderSessions() {
+        if (sessionsState.loading) {
+          return `<div class="loading"><div class="spin"></div><span>Loading sessions…</span></div>`;
+        }
+        if (!sessionsState.data)
+          return `<div class="empty-state">No data available.</div>`;
+
+        const rows =
+          sessionsState.data
+            .map(
+              (s) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${s.session_id}</span></td>
+      <td>${s.game_name}</td>
+      <td>${s.room_name}</td>
+      <td>${fmtTime(s.start_time)}</td>
+      <td>${fmtTime(s.end_time)}</td>
+      <td>${Math.round(s.duration_actual_minutes || 0)} min</td>
+      <td>${s.success === null ? '<span class="text-muted">—</span>' : s.success ? '<span class="badge badge-green">✓ Escaped</span>' : '<span class="badge badge-red">✗ Failed</span>'}</td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="7"><div class="empty-state" style="padding:20px">No sessions found</div></td></tr>`;
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">Game Sessions</div><div class="page-sub">${fmt(sessionsState.total)} recorded sessions</div></div>
+      <button class="btn btn-primary" onclick="openAddSession()">+ Log Session</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="filters-bar">
+        <select class="filter-select" onchange="sessionsFilter('success',this.value)">
+          <option value="">All Outcomes</option>
+          <option value="true">Escaped ✓</option>
+          <option value="false">Failed ✗</option>
+        </select>
+      </div>
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Game</th><th>Room</th><th>Start</th><th>End</th><th>Duration</th><th>Outcome</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(sessionsState.page, sessionsState.total, sessionsState.limit, "sessionsPage")}</div>
+    </div>`;
+      }
+
+      window.openAddSession = async function () {
+        const [bookings, games, rooms] = await Promise.all([
+          api("/bookings?page=1&limit=100&status=CONFIRMED"),
+          api("/lookup/games"),
+          api("/lookup/rooms"),
+        ]);
+        openModal(`
+    <div class="modal-header"><div class="modal-title">Log Game Session</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group">
+        <label class="field-label">Booking (Confirmed) *</label>
+        <select class="field-select" id="sf_booking">
+          <option value="">— Select Booking —</option>
+          ${bookings.data.map((b) => `<option value="${b.booking_id}">#${b.booking_id} — ${b.customer_name} (${b.game_name})</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="field-group">
+          <label class="field-label">Game *</label>
+          <select class="field-select" id="sf_game">${games.map((g) => `<option value="${g.game_id}">${g.game_name}</option>`).join("")}</select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Room *</label>
+          <select class="field-select" id="sf_room">${rooms.map((r) => `<option value="${r.room_id}">${r.room_name}</option>`).join("")}</select>
+        </div>
+        <div class="field-group"><label class="field-label">Start Time *</label><input class="field-input" id="sf_start" type="datetime-local"/></div>
+        <div class="field-group"><label class="field-label">End Time *</label><input class="field-input" id="sf_end" type="datetime-local"/></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Outcome</label>
+        <select class="field-select" id="sf_success">
+          <option value="">Not determined</option>
+          <option value="true">✓ Escaped</option>
+          <option value="false">✗ Failed</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddSession()">Log Session</button>
+    </div>`);
+      };
+
+      window.submitAddSession = async function () {
+        const successVal = document.getElementById("sf_success").value;
+        const body = {
+          booking_id: parseInt(document.getElementById("sf_booking").value),
+          game_id: parseInt(document.getElementById("sf_game").value),
+          room_id: parseInt(document.getElementById("sf_room").value),
+          start_time: document.getElementById("sf_start").value,
+          end_time: document.getElementById("sf_end").value,
+          success: successVal === "" ? null : successVal === "true",
+        };
+        if (!body.booking_id || !body.start_time || !body.end_time)
+          return showToast("Fill required fields", "error");
+        await api("/sessions", { method: "POST", body });
+        showToast("Session logged!");
+        closeModal();
+        sessionsState.data = null;
+        loadSessions();
+      };
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  PAYMENTS
+      // ══════════════════════════════════════════════════════════════════════════════
+      let paymentsState = {
+        data: null,
+        total: 0,
+        page: 1,
+        limit: 20,
+        status: "",
+        method: "",
+        fromDate: "",
+        toDate: "",
+        loading: false,
+      };
+
+      async function loadPayments() {
+        if (paymentsState.loading) return;
+        paymentsState.loading = true;
+        try {
+          const p = new URLSearchParams({
+            page: paymentsState.page,
+            limit: paymentsState.limit,
+          });
+          if (paymentsState.status) p.append("status", paymentsState.status);
+          if (paymentsState.method) p.append("method", paymentsState.method);
+          if (paymentsState.fromDate)
+            p.append("from_date", paymentsState.fromDate);
+          if (paymentsState.toDate) p.append("to_date", paymentsState.toDate);
+          const r = await api(`/payments?${p}`);
+          paymentsState.data = r.data;
+          paymentsState.total = r.total;
+        } finally {
+          paymentsState.loading = false;
+          render();
+        }
+      }
+
+      window.paymentsPage = (p) => {
+        paymentsState.page = p;
+        loadPayments();
+      };
+      window.paymentsFilter = (f, v) => {
+        paymentsState[f] = v;
+        paymentsState.page = 1;
+        loadPayments();
+      };
+
+      function renderPayments() {
+        if (paymentsState.loading) {
+          return `<div class="loading"><div class="spin"></div><span>Loading payments…</span></div>`;
+        }
+        if (!paymentsState.data)
+          return `<div class="empty-state">No data available.</div>`;
+
+        const rows =
+          paymentsState.data
+            .map(
+              (p) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${p.payment_id}</span></td>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${p.booking_id}</span></td>
+      <td>${p.customer_name}</td>
+      <td><strong>${fmtMoney(p.amount)}</strong></td>
+      <td><span class="badge badge-gray">${p.payment_method}</span></td>
+      <td>${statusBadge(p.payment_status)}</td>
+      <td>${fmtTime(p.payment_time)}</td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="7"><div class="empty-state" style="padding:20px">No payments found</div></td></tr>`;
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">Payments</div><div class="page-sub">${fmt(paymentsState.total)} transactions</div></div>
+      <button class="btn btn-primary" onclick="openAddPayment()">+ Record Payment</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="filters-bar">
+        <select class="filter-select" onchange="paymentsFilter('status',this.value)">
+          <option value="">All Status</option>
+          <option value="SUCCESS">Success</option>
+          <option value="PENDING">Pending</option>
+          <option value="FAILED">Failed</option>
+        </select>
+        <select class="filter-select" onchange="paymentsFilter('method',this.value)">
+          <option value="">All Methods</option>
+          <option value="Card">Card</option>
+          <option value="Cash">Cash</option>
+          <option value="Online">Online</option>
+        </select>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input type="date" class="filter-select" placeholder="From" value="${paymentsState.fromDate}" onchange="paymentsFilter('fromDate',this.value)"/>
+          <span style="color:var(--text-muted)">–</span>
+          <input type="date" class="filter-select" placeholder="To" value="${paymentsState.toDate}" onchange="paymentsFilter('toDate',this.value)"/>
+        </div>
+      </div>
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>Pay ID</th><th>Booking</th><th>Customer</th><th>Amount</th><th>Method</th><th>Status</th><th>Time</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(paymentsState.page, paymentsState.total, paymentsState.limit, "paymentsPage")}</div>
+    </div>`;
+      }
+
+      window.openAddPayment = async function () {
+        const bookings = await api(
+          "/bookings?page=1&limit=100&status=CONFIRMED",
+        );
+        openModal(`
+    <div class="modal-header"><div class="modal-title">Record Payment</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group">
+        <label class="field-label">Booking *</label>
+        <select class="field-select" id="pf_booking">
+          <option value="">— Select Booking —</option>
+          ${bookings.data.map((b) => `<option value="${b.booking_id}">#${b.booking_id} — ${b.customer_name} (${b.game_name})</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-grid form-grid-3">
+        <div class="field-group"><label class="field-label">Amount ($) *</label><input class="field-input" id="pf_amount" type="number" step="0.01" placeholder="49.99"/></div>
+        <div class="field-group"><label class="field-label">Method *</label>
+          <select class="field-select" id="pf_method">
+            <option value="Card">Card</option>
+            <option value="Cash">Cash</option>
+            <option value="Online">Online</option>
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Status *</label>
+          <select class="field-select" id="pf_status">
+            <option value="SUCCESS">Success</option>
+            <option value="PENDING">Pending</option>
+            <option value="FAILED">Failed</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddPayment()">Record Payment</button>
+    </div>`);
+      };
+
+      window.submitAddPayment = async function () {
+        const body = {
+          booking_id: parseInt(document.getElementById("pf_booking").value),
+          amount: parseFloat(document.getElementById("pf_amount").value),
+          payment_method: document.getElementById("pf_method").value,
+          payment_status: document.getElementById("pf_status").value,
+        };
+        if (!body.booking_id || isNaN(body.amount))
+          return showToast("Fill required fields", "error");
+        await api("/payments", { method: "POST", body });
+        showToast("Payment recorded!");
+        closeModal();
+        paymentsState.data = null;
+        loadPayments();
+      };
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  SALARIES & LEAVES
+      // ══════════════════════════════════════════════════════════════════════════════
+      let hrState = {
+        tab: "salaries",
+        salaries: { data: null, total: 0, page: 1, limit: 20, loading: false },
+        leaves: { data: null, total: 0, page: 1, limit: 20, loading: false },
+      };
+
+      async function loadSalaries() {
+        if (hrState.salaries.loading) return;
+        hrState.salaries.loading = true;
+        try {
+          const r = await api(
+            `/salaries?page=${hrState.salaries.page}&limit=${hrState.salaries.limit}`,
+          );
+          hrState.salaries.data = r.data;
+          hrState.salaries.total = r.total;
+        } finally {
+          hrState.salaries.loading = false;
+          render();
+        }
+      }
+
+      async function loadLeaves() {
+        if (hrState.leaves.loading) return;
+        hrState.leaves.loading = true;
+        try {
+          const r = await api(
+            `/leaves?page=${hrState.leaves.page}&limit=${hrState.leaves.limit}`,
+          );
+          hrState.leaves.data = r.data;
+          hrState.leaves.total = r.total;
+        } finally {
+          hrState.leaves.loading = false;
+          render();
+        }
+      }
+
+      window.hrTabSwitch = (t) => {
+        hrState.tab = t;
+        render();
+      };
+      window.salariesPage = (p) => {
+        hrState.salaries.page = p;
+        loadSalaries();
+      };
+      window.leavesPage = (p) => {
+        hrState.leaves.page = p;
+        loadLeaves();
+      };
+
+      function renderHR() {
+        if (hrState.salaries.loading || hrState.leaves.loading) {
+          return `<div class="loading"><div class="spin"></div><span>Loading HR data…</span></div>`;
+        }
+        if (!hrState.salaries.data)
+          return `<div class="empty-state">No data available.</div>`;
+
+        const salRows =
+          hrState.salaries.data
+            .map(
+              (s) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${s.salary_id}</span></td>
+      <td><strong>${s.employee_name}</strong></td>
+      <td>${statusBadge(s.role)}</td>
+      <td>${fmtDate(s.month)}</td>
+      <td>${s.total_hours}h</td>
+      <td><strong>${fmtMoney(s.total_pay)}</strong></td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="6"><div class="empty-state" style="padding:20px">No salary records</div></td></tr>`;
+
+        const leaveRows =
+          (hrState.leaves.data || [])
+            .map(
+              (l) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${l.leave_id}</span></td>
+      <td><strong>${l.employee_name}</strong></td>
+      <td>${fmtDate(l.start_date)}</td>
+      <td>${fmtDate(l.end_date)}</td>
+      <td>${l.reason || '<span class="text-muted">—</span>'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteLeave(${l.leave_id})">Remove</button></td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="6"><div class="empty-state" style="padding:20px">No leave records</div></td></tr>`;
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">HR Management</div><div class="page-sub">Salaries and leave management</div></div>
+      <button class="btn btn-primary" onclick="hrState.tab==='salaries'?openAddSalary():openAddLeave()">${hrState.tab === "salaries" ? "+ Record Salary" : "+ Log Leave"}</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn ${hrState.tab === "salaries" ? "active" : ""}" onclick="hrTabSwitch('salaries')">💵 Salaries</button>
+      <button class="tab-btn ${hrState.tab === "leaves" ? "active" : ""}" onclick="hrTabSwitch('leaves')">🏖️ Leave Records</button>
+    </div>
+    ${
+      hrState.tab === "salaries"
+        ? `
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Employee</th><th>Role</th><th>Month</th><th>Hours</th><th>Total Pay</th></tr></thead>
+          <tbody>${salRows}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(hrState.salaries.page, hrState.salaries.total, hrState.salaries.limit, "salariesPage")}</div>
+    </div>`
+        : `
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Employee</th><th>Start Date</th><th>End Date</th><th>Reason</th><th>Actions</th></tr></thead>
+          <tbody>${leaveRows}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(hrState.leaves.page, hrState.leaves.total, hrState.leaves.limit, "leavesPage")}</div>
+    </div>`
+    }`;
+      }
+
+      window.openAddSalary = async function () {
+        const emps = await api("/lookup/employees");
+        openModal(`
+    <div class="modal-header"><div class="modal-title">Record Salary</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group"><label class="field-label">Employee *</label>
+        <select class="field-select" id="sal_emp">
+          <option value="">— Select —</option>
+          ${emps.map((e) => `<option value="${e.employee_id}">${e.name} (${e.role})</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="field-group"><label class="field-label">Month *</label><input class="field-input" id="sal_month" type="month"/></div>
+        <div class="field-group"><label class="field-label">Total Hours *</label><input class="field-input" id="sal_hours" type="number" placeholder="160"/></div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);padding:8px;background:var(--surface2);border-radius:6px">
+        💡 Total pay will be auto-calculated as: Hours × Hourly Rate
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddSalary()">Record</button>
+    </div>`);
+      };
+
+      window.submitAddSalary = async function () {
+        const body = {
+          employee_id: parseInt(document.getElementById("sal_emp").value),
+          month: document.getElementById("sal_month").value + "-01",
+          total_hours: parseInt(document.getElementById("sal_hours").value),
+        };
+        if (!body.employee_id || !body.total_hours)
+          return showToast("Fill required fields", "error");
+        await api("/salaries", { method: "POST", body });
+        showToast("Salary recorded!");
+        closeModal();
+        hrState.salaries.data = null;
+        loadSalaries();
+      };
+
+      window.openAddLeave = async function () {
+        const emps = await api("/lookup/employees");
+        openModal(`
+    <div class="modal-header"><div class="modal-title">Log Leave</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group"><label class="field-label">Employee *</label>
+        <select class="field-select" id="lv_emp">
+          ${emps.map((e) => `<option value="${e.employee_id}">${e.name}</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="field-group"><label class="field-label">Start Date *</label><input class="field-input" id="lv_start" type="date"/></div>
+        <div class="field-group"><label class="field-label">End Date *</label><input class="field-input" id="lv_end" type="date"/></div>
+      </div>
+      <div class="field-group"><label class="field-label">Reason</label><textarea class="field-textarea" id="lv_reason" placeholder="Optional reason…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddLeave()">Log Leave</button>
+    </div>`);
+      };
+
+      window.submitAddLeave = async function () {
+        const body = {
+          employee_id: parseInt(document.getElementById("lv_emp").value),
+          start_date: document.getElementById("lv_start").value,
+          end_date: document.getElementById("lv_end").value,
+          reason: document.getElementById("lv_reason").value || null,
+        };
+        if (!body.start_date || !body.end_date)
+          return showToast("Fill required dates", "error");
+        await api("/leaves", { method: "POST", body });
+        showToast("Leave logged!");
+        closeModal();
+        hrState.leaves.data = null;
+        loadLeaves();
+      };
+
+      window.deleteLeave = function (id) {
+        state.confirmDialog = {
+          title: "Delete Leave Record",
+          msg: "Remove this leave record?",
+          onConfirm: async () => {
+            await api(`/leaves/${id}`, { method: "DELETE" });
+            showToast("Leave removed");
+            state.confirmDialog = null;
+            hrState.leaves.data = null;
+            loadLeaves();
+          },
+          onCancel: () => {
+            state.confirmDialog = null;
+            render();
+          },
+        };
+        render();
+      };
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  CLUES
+      // ══════════════════════════════════════════════════════════════════════════════
+      let cluesState = {
+        data: null,
+        total: 0,
+        page: 1,
+        limit: 20,
+        gameId: "",
+        loading: false,
+      };
+
+      async function loadClues() {
+        if (cluesState.loading) return;
+        cluesState.loading = true;
+        try {
+          const p = new URLSearchParams({
+            page: cluesState.page,
+            limit: cluesState.limit,
+          });
+          if (cluesState.gameId) p.append("game_id", cluesState.gameId);
+          const r = await api(`/clues?${p}`);
+          cluesState.data = r.data;
+          cluesState.total = r.total;
+        } finally {
+          cluesState.loading = false;
+          render();
+        }
+      }
+
+      window.cluesPage = (p) => {
+        cluesState.page = p;
+        loadClues();
+      };
+
+      function renderClues() {
+        if (cluesState.loading) {
+          return `<div class="loading"><div class="spin"></div><span>Loading clues…</span></div>`;
+        }
+        if (!cluesState.data)
+          return `<div class="empty-state">No data available.</div>`;
+
+        const rows =
+          cluesState.data
+            .map(
+              (c) => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:12px">#${c.clue_id}</span></td>
+      <td><span class="badge badge-purple">${c.game_name}</span></td>
+      <td>${c.clue_text}</td>
+      <td><span class="badge ${c.time_penalty > 10 ? "badge-red" : c.time_penalty > 5 ? "badge-yellow" : "badge-green"}">+${c.time_penalty}m</span></td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteClue(${c.clue_id})">Delete</button></td>
+    </tr>`,
+            )
+            .join("") ||
+          `<tr><td colspan="5"><div class="empty-state" style="padding:20px">No clues found</div></td></tr>`;
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">Clues</div><div class="page-sub">Game clues and time penalties</div></div>
+      <button class="btn btn-primary" onclick="openAddClue()">+ Add Clue</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>#ID</th><th>Game</th><th>Clue Text</th><th>Time Penalty</th><th>Actions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="padding:0 18px 14px">${renderPagination(cluesState.page, cluesState.total, cluesState.limit, "cluesPage")}</div>
+    </div>`;
+      }
+
+      window.openAddClue = async function () {
+        const games = await api("/lookup/games");
+        openModal(`
+    <div class="modal-header"><div class="modal-title">Add Clue</div><button class="btn btn-secondary btn-sm btn-icon" onclick="closeModal()">✕</button></div>
+    <div class="form-grid">
+      <div class="field-group"><label class="field-label">Game *</label>
+        <select class="field-select" id="clf_game">
+          ${games.map((g) => `<option value="${g.game_id}">${g.game_name}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Clue Text *</label>
+        <textarea class="field-textarea" id="clf_text" placeholder="Look behind the portrait…"></textarea>
+      </div>
+      <div class="field-group"><label class="field-label">Time Penalty (minutes) *</label>
+        <input class="field-input" id="clf_penalty" type="number" min="0" placeholder="5"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddClue()">Add Clue</button>
+    </div>`);
+      };
+
+      window.submitAddClue = async function () {
+        const body = {
+          game_id: parseInt(document.getElementById("clf_game").value),
+          clue_text: document.getElementById("clf_text").value,
+          time_penalty:
+            parseInt(document.getElementById("clf_penalty").value) || 0,
+        };
+        if (!body.clue_text) return showToast("Enter clue text", "error");
+        await api("/clues", { method: "POST", body });
+        showToast("Clue added!");
+        closeModal();
+        cluesState.data = null;
+        loadClues();
+      };
+
+      window.deleteClue = function (id) {
+        state.confirmDialog = {
+          title: "Delete Clue",
+          msg: "Remove this clue?",
+          onConfirm: async () => {
+            await api(`/clues/${id}`, { method: "DELETE" });
+            showToast("Clue deleted");
+            state.confirmDialog = null;
+            cluesState.data = null;
+            loadClues();
+          },
+          onCancel: () => {
+            state.confirmDialog = null;
+            render();
+          },
+        };
+        render();
+      };
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  ANALYTICS
+      // ══════════════════════════════════════════════════════════════════════════════
+      let analyticsState = { tab: "revenue", data: {}, loading: {} };
+
+      async function loadAnalytics(tab) {
+        analyticsState.loading[tab] = true;
+        render();
+        const endpoints = {
+          revenue: "/analytics/revenue?period=monthly",
+          gamePerf: "/analytics/game-performance",
+          empPerf: "/analytics/employee-performance",
+          trends: "/analytics/booking-trends",
+          payments: "/analytics/payment-breakdown",
+          customers: "/analytics/customer-insights",
+          clues: "/analytics/clue-usage",
+        };
+        if (endpoints[tab]) {
+          analyticsState.data[tab] = await api(endpoints[tab]);
+          analyticsState.loading[tab] = false;
+          render();
+        }
+      }
+
+      window.analyticsTab = (t) => {
+        analyticsState.tab = t;
+        if (!analyticsState.data[t]) loadAnalytics(t);
+        render();
+      };
+
+      function renderAnalytics() {
+        const tab = analyticsState.tab;
+        if (!analyticsState.data[tab] && !analyticsState.loading[tab])
+          loadAnalytics(tab);
+
+        const tabs = [
+          { id: "revenue", label: "💰 Revenue" },
+          { id: "gamePerf", label: "🎮 Game Performance" },
+          { id: "empPerf", label: "👷 Employee Stats" },
+          { id: "trends", label: "📅 Booking Trends" },
+          { id: "payments", label: "💳 Payments" },
+          { id: "customers", label: "👥 Customers" },
+          { id: "clues", label: "🔍 Clue Usage" },
+        ];
+
+        return `
+    <div class="page-header">
+      <div><div class="page-title">Analytics & Reports</div><div class="page-sub">Business intelligence and performance metrics</div></div>
+      <button class="btn btn-secondary" onclick="analyticsState.data={};loadAnalytics('${tab}')">↺ Refresh</button>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">
+      ${tabs.map((t) => `<button class="tab-btn ${tab === t.id ? "active" : ""}" onclick="analyticsTab('${t.id}')">${t.label}</button>`).join("")}
+    </div>
+    ${analyticsState.loading[tab] ? `<div class="loading"><div class="spin"></div><span>Loading data…</span></div>` : renderAnalyticsContent(tab)}`;
+      }
+
+      function renderAnalyticsContent(tab) {
+        const d = analyticsState.data[tab];
+        if (!d) return `<div class="loading"><div class="spin"></div></div>`;
+
+        if (tab === "revenue") {
+          const maxRev = Math.max(
+            ...(d || []).map((r) => parseFloat(r.revenue) || 0),
+            1,
+          );
+          return `
+      <div class="card">
+        <div class="card-title">Monthly Revenue</div>
+        <div class="bar-chart">
+          ${(d || [])
+            .map(
+              (r) => `
+            <div class="bar-row">
+              <span class="bar-label">${r.label}</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="width:${Math.round((r.revenue / maxRev) * 100)}%;background:var(--accent)">
+                  <span>${fmtMoney(r.revenue)}</span>
+                </div>
+              </div>
+              <span style="font-size:12px;color:var(--text-muted);width:60px;text-align:right">${r.transactions} txns</span>
+            </div>`,
+            )
+            .join("")}
+        </div>
+        ${d.length === 0 ? '<div class="empty-state" style="padding:20px">No revenue data yet</div>' : ""}
+      </div>`;
+        }
+
+        if (tab === "gamePerf") {
+          const rows = d
+            .map(
+              (g) => `
+      <tr>
+        <td><strong>${g.game_name}</strong></td>
+        <td>${diffBadge(g.difficulty_level)}</td>
+        <td>${fmt(g.total_sessions)}</td>
+        <td>${fmt(g.successful)}</td>
+        <td>
+          <div class="mini-bar">
+            <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${g.success_rate || 0}%"></div></div>
+            <span style="font-size:12px;width:40px">${g.success_rate || 0}%</span>
+          </div>
+        </td>
+        <td>${g.avg_duration_mins} min</td>
+        <td>${fmt(g.total_clues_used)}</td>
+      </tr>`,
+            )
+            .join("");
+          return `
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:18px 20px"><div class="card-title" style="margin:0">Game Performance Summary</div></div>
+        <div class="table-wrap" style="border:none;border-radius:0">
+          <table>
+            <thead><tr><th>Game</th><th>Difficulty</th><th>Sessions</th><th>Escaped</th><th>Success Rate</th><th>Avg Duration</th><th>Clues Used</th></tr></thead>
+            <tbody>${rows || '<tr><td colspan="7"><div class="empty-state" style="padding:20px">No session data</div></td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>`;
+        }
+
+        if (tab === "empPerf") {
+          const maxSessions = Math.max(
+            ...(d || []).map((e) => e.sessions_conducted || 0),
+            1,
+          );
+          return `
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:18px 20px"><div class="card-title" style="margin:0">Employee Performance</div></div>
+        <div class="table-wrap" style="border:none;border-radius:0">
+          <table>
+            <thead><tr><th>Name</th><th>Role</th><th>Sessions</th><th>Hours Worked</th><th>Total Paid</th><th>Leaves</th><th>Activity</th></tr></thead>
+            <tbody>${(d || [])
+              .map(
+                (e) => `
+              <tr>
+                <td><strong>${e.name}</strong></td>
+                <td>${statusBadge(e.role)}</td>
+                <td>${fmt(e.sessions_conducted)}</td>
+                <td>${fmt(e.total_hours)}h</td>
+                <td>${fmtMoney(e.total_salary_paid)}</td>
+                <td>${e.leave_days} days</td>
+                <td>
+                  <div class="mini-bar">
+                    <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${Math.round((e.sessions_conducted / maxSessions) * 100)}%"></div></div>
+                  </div>
+                </td>
+              </tr>`,
+              )
+              .join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+        }
+
+        if (tab === "trends") {
+          const maxTotal = Math.max(...(d || []).map((r) => r.total || 0), 1);
+          return `
+      <div class="card">
+        <div class="card-title">Bookings by Day of Week</div>
+        <div class="bar-chart">
+          ${(d || [])
+            .map(
+              (r) => `
+            <div class="bar-row">
+              <span class="bar-label">${r.day_of_week}</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="width:${Math.round((r.total / maxTotal) * 100)}%;background:var(--blue)">
+                  <span>${r.total}</span>
+                </div>
+              </div>
+              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap">✓${r.completed || 0} ✕${r.cancelled || 0}</span>
+            </div>`,
+            )
+            .join("")}
+        </div>
+      </div>`;
+        }
+
+        if (tab === "payments") {
+          const { by_method = [], by_status = [] } = d;
+          const maxMethod = Math.max(
+            ...by_method.map((x) => parseFloat(x.total) || 0),
+            1,
+          );
+          return `
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Revenue by Payment Method</div>
+          <div class="bar-chart">
+            ${by_method
+              .map(
+                (m) => `
+              <div class="bar-row">
+                <span class="bar-label">${m.payment_method}</span>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${Math.round((m.total / maxMethod) * 100)}%;background:var(--purple)">
+                    <span>${fmtMoney(m.total)}</span>
+                  </div>
+                </div>
+                <span style="font-size:12px;color:var(--text-muted)">${m.count} txns</span>
+              </div>`,
+              )
+              .join("")}
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Transaction Status Breakdown</div>
+          <div class="donut-row">
+            ${by_status
+              .map(
+                (s) => `
+              <div class="donut-item">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div class="donut-dot" style="background:${s.payment_status === "SUCCESS" ? "var(--green)" : s.payment_status === "FAILED" ? "var(--red)" : "var(--yellow)"}"></div>
+                  <span>${s.payment_status}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <strong>${fmtMoney(s.total)}</strong>
+                  <span class="text-muted">${s.count} txns</span>
+                </div>
+              </div>`,
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>`;
+        }
+
+        if (tab === "customers") {
+          const { top_spenders = [], retention } = d;
+          const maxSpend = Math.max(
+            ...top_spenders.map((c) => parseFloat(c.total_spent) || 0),
+            1,
+          );
+          return `
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Top Customers by Spend</div>
+          <div class="bar-chart">
+            ${top_spenders
+              .map(
+                (c) => `
+              <div class="bar-row">
+                <span class="bar-label">${c.name}</span>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${Math.round((c.total_spent / maxSpend) * 100)}%;background:var(--orange)">
+                    <span>${fmtMoney(c.total_spent)}</span>
+                  </div>
+                </div>
+                <span style="font-size:12px;color:var(--text-muted)">${c.bookings} bookings</span>
+              </div>`,
+              )
+              .join("")}
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Customer Retention</div>
+          ${
+            retention
+              ? `
+          <div class="donut-row" style="gap:14px">
+            <div class="donut-item"><div style="display:flex;align-items:center;gap:8px"><div class="donut-dot" style="background:var(--red)"></div><span>One-time customers</span></div><strong>${fmt(retention.one_time)}</strong></div>
+            <div class="donut-item"><div style="display:flex;align-items:center;gap:8px"><div class="donut-dot" style="background:var(--yellow)"></div><span>Returning (2–4 bookings)</span></div><strong>${fmt(retention.returning)}</strong></div>
+            <div class="donut-item"><div style="display:flex;align-items:center;gap:8px"><div class="donut-dot" style="background:var(--green)"></div><span>Loyal (5+ bookings)</span></div><strong>${fmt(retention.loyal)}</strong></div>
+          </div>`
+              : '<div class="empty-state" style="padding:20px">No data</div>'
+          }
+        </div>
+      </div>`;
+        }
+
+        if (tab === "clues") {
+          const rows = d
+            .map(
+              (c) => `
+      <tr>
+        <td>${c.game_name}</td>
+        <td>${c.clue_text}</td>
+        <td><span class="badge ${c.time_penalty > 10 ? "badge-red" : c.time_penalty > 5 ? "badge-yellow" : "badge-green"}">+${c.time_penalty}m</span></td>
+        <td><strong>${fmt(c.times_used)}</strong></td>
+      </tr>`,
+            )
+            .join("");
+          return `
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:18px 20px"><div class="card-title" style="margin:0">Most Used Clues</div></div>
+        <div class="table-wrap" style="border:none;border-radius:0">
+          <table>
+            <thead><tr><th>Game</th><th>Clue</th><th>Time Penalty</th><th>Times Used</th></tr></thead>
+            <tbody>${rows || '<tr><td colspan="4"><div class="empty-state" style="padding:20px">No clue usage data</div></td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>`;
+        }
+
+        return `<div class="empty-state">No data available</div>`;
+      }
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  QUERY PLAYGROUND
+      // ══════════════════════════════════════════════════════════════════════════════
+      let playgroundState = {
+        result: null,
+        loading: false,
+        error: null,
+        schema: null,
+        schemaExpanded: {},
+      };
+      const SAMPLE_QUERIES = [
+        {
+          label: "Revenue by Game",
+          sql: `SELECT g.game_name,\n  COUNT(b.booking_id) AS total_bookings,\n  COALESCE(SUM(p.amount),0) AS revenue\nFROM games g\nLEFT JOIN bookings b ON g.game_id = b.game_id\nLEFT JOIN payments p ON b.booking_id = p.booking_id\n  AND p.payment_status = 'SUCCESS'\nGROUP BY g.game_id, g.game_name\nORDER BY revenue DESC;`,
+        },
+        {
+          label: "Monthly Bookings",
+          sql: `SELECT\n  TO_CHAR(DATE_TRUNC('month', booking_date), 'Mon YYYY') AS month,\n  COUNT(*) AS total,\n  COUNT(*) FILTER (WHERE status = 'CONFIRMED') AS confirmed,\n  COUNT(*) FILTER (WHERE status = 'COMPLETED') AS completed,\n  COUNT(*) FILTER (WHERE status = 'CANCELLED') AS cancelled\nFROM bookings\nGROUP BY DATE_TRUNC('month', booking_date)\nORDER BY DATE_TRUNC('month', booking_date) DESC;`,
+        },
+        {
+          label: "Top Customers",
+          sql: `SELECT\n  c.first_name || ' ' || c.last_name AS customer,\n  COUNT(b.booking_id) AS bookings,\n  COALESCE(SUM(p.amount), 0) AS total_spent,\n  MAX(b.booking_date) AS last_booking\nFROM customers c\nLEFT JOIN bookings b ON c.customer_id = b.customer_id\nLEFT JOIN payments p ON b.booking_id = p.booking_id\n  AND p.payment_status = 'SUCCESS'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_spent DESC\nLIMIT 10;`,
+        },
+        {
+          label: "Session Efficiency",
+          sql: `SELECT\n  g.game_name,\n  COUNT(gs.session_id) AS sessions,\n  ROUND(AVG(\n    EXTRACT(EPOCH FROM (gs.end_time - gs.start_time))/60\n  ), 1) AS avg_minutes,\n  ROUND(100.0 * COUNT(*) FILTER (WHERE gs.success)\n    / NULLIF(COUNT(gs.session_id), 0), 1) AS escape_rate_pct\nFROM game_sessions gs\nJOIN games g ON gs.game_id = g.game_id\nGROUP BY g.game_id, g.game_name\nORDER BY escape_rate_pct DESC NULLS LAST;`,
+        },
+        {
+          label: "Employee Workload",
+          sql: `SELECT\n  e.name,\n  e.role,\n  COUNT(se.session_id) AS sessions_led,\n  COALESCE(SUM(s.total_hours), 0) AS hours_logged,\n  COALESCE(SUM(s.total_pay), 0) AS salary_paid\nFROM employees e\nLEFT JOIN session_employees se ON e.employee_id = se.employee_id\nLEFT JOIN salaries s ON e.employee_id = s.employee_id\nGROUP BY e.employee_id, e.name, e.role\nORDER BY sessions_led DESC;`,
+        },
+      ];
+
+      window.loadSchema = async function () {
+        if (playgroundState.schema) {
+          playgroundState.schema = null;
+          render();
+          return;
+        }
+        playgroundState.schema = await api("/query/schema");
+        render();
+      };
+
+      window.setSampleQuery = function (idx) {
+        document.getElementById("query-editor").value = SAMPLE_QUERIES[idx].sql;
+      };
+
+      window.runQuery = async function () {
+        const sql = document.getElementById("query-editor").value.trim();
+        if (!sql) return;
+        playgroundState.loading = true;
+        playgroundState.error = null;
+        render();
+        try {
+          playgroundState.result = await api("/query/execute", {
+            method: "POST",
+            body: { sql },
+          });
+        } catch (e) {
+          playgroundState.error = e.message;
+          playgroundState.result = null;
+        }
+        playgroundState.loading = false;
+        render();
+        // Re-focus editor
+        setTimeout(() => {
+          const el = document.getElementById("query-editor");
+          if (el) el.focus();
+        }, 50);
+      };
+
+      window.toggleSchema = function (tbl) {
+        playgroundState.schemaExpanded[tbl] =
+          !playgroundState.schemaExpanded[tbl];
+        render();
+      };
+
+      function renderPlayground() {
+        const schema = playgroundState.schema;
+        return `
+    <div class="page-header">
+      <div><div class="page-title">SQL Playground</div><div class="page-sub">Write and execute custom SELECT queries against the database</div></div>
+      <button class="btn btn-secondary" onclick="loadSchema()">
+        ${schema ? "▲ Hide Schema" : "📋 Show Schema"}
+      </button>
+    </div>
+    
+    ${
+      schema
+        ? `
+    <div class="card" style="margin-bottom:20px;max-height:320px;overflow-y:auto">
+      <div class="card-title">Database Schema</div>
+      <div class="schema-tree">
+        ${Object.entries(schema)
+          .map(
+            ([tbl, cols]) => `
+          <div>
+            <div class="schema-table-name" onclick="toggleSchema('${tbl}')">
+              ${playgroundState.schemaExpanded[tbl] ? "▼" : "▶"} ${tbl}
+              <span style="font-weight:400;color:var(--text-muted);font-size:11px">(${cols.length} cols)</span>
+            </div>
+            ${
+              playgroundState.schemaExpanded[tbl]
+                ? cols
+                    .map(
+                      (c) => `
+              <div class="schema-col">
+                <span>${c.column_name}</span>
+                <span class="schema-col-type">${c.data_type}</span>
+                ${c.is_nullable === "NO" ? '<span style="color:var(--red);font-size:10px">NOT NULL</span>' : ""}
+              </div>`,
+                    )
+                    .join("")
+                : ""
+            }
+          </div>`,
+          )
+          .join("")}
+      </div>
+    </div>`
+        : ""
+    }
+    
+    <div class="card">
+      <div class="card-title">Query Editor</div>
+      <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--text-muted);align-self:center">Sample queries:</span>
+        ${SAMPLE_QUERIES.map((q, i) => `<button class="btn btn-secondary btn-sm" onclick="setSampleQuery(${i})">${q.label}</button>`).join("")}
+      </div>
+      <textarea id="query-editor" class="query-editor" placeholder="-- Write your SELECT query here…\n-- Only SELECT, WITH, and EXPLAIN queries are allowed.\n\nSELECT * FROM customers LIMIT 10;"
+        onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey))runQuery()"
+      >${""}</textarea>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+        <button class="btn btn-primary" onclick="runQuery()" ${playgroundState.loading ? "disabled" : ""}>
+          ${playgroundState.loading ? "⏳ Running…" : "▶ Run Query"} <span style="font-size:11px;opacity:0.7">(Ctrl+Enter)</span>
+        </button>
+        <span style="font-size:12px;color:var(--text-muted)">⚠️ Read-only: SELECT queries only</span>
+      </div>
+      
+      ${
+        playgroundState.error
+          ? `
+        <div style="margin-top:14px;padding:12px;background:var(--red-bg);border:1px solid #fecaca;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:12.5px;color:var(--red)">
+          ❌ ${playgroundState.error}
+        </div>`
+          : ""
+      }
+      
+      ${
+        playgroundState.result
+          ? `
+        <div style="margin-top:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <span style="font-size:13px;font-weight:600;color:var(--green)">✓ ${fmt(playgroundState.result.rows)} row${playgroundState.result.rows !== 1 ? "s" : ""} returned</span>
+          </div>
+          ${
+            playgroundState.result.rows > 0
+              ? `
+          <div class="table-wrap query-result-table" style="max-height:400px;overflow:auto">
+            <table>
+              <thead>
+                <tr>${Object.keys(playgroundState.result.data[0] || {})
+                  .map((k) => `<th>${k}</th>`)
+                  .join("")}</tr>
+              </thead>
+              <tbody>
+                ${playgroundState.result.data
+                  .map(
+                    (row) => `
+                  <tr>${Object.values(row)
+                    .map(
+                      (v) =>
+                        `<td style="font-family:var(--font-mono);font-size:12px">${v === null ? '<span class="text-muted">NULL</span>' : String(v)}</td>`,
+                    )
+                    .join("")}</tr>
+                `,
+                  )
+                  .join("")}
+              </tbody>
+            </table>
+          </div>`
+              : '<div class="empty-state" style="padding:20px">Query returned no rows</div>'
+          }
+        </div>`
+          : ""
+      }
+    </div>`;
+      }
+
+      // ══════════════════════════════════════════════════════════════════════════════
+      //  RENDER ENGINE
+      // ══════════════════════════════════════════════════════════════════════════════
+      const NAV = [
+        { id: "dashboard", label: "Dashboard", icon: "◈" },
+        { section: "Operations" },
+        { id: "bookings", label: "Bookings", icon: "📋" },
+        { id: "sessions", label: "Sessions", icon: "🎮" },
+        { id: "payments", label: "Payments", icon: "💳" },
+        { section: "Management" },
+        { id: "customers", label: "Customers", icon: "👥" },
+        { id: "employees", label: "Employees", icon: "👷" },
+        { id: "hr", label: "HR & Salaries", icon: "💵" },
+        { section: "Catalog" },
+        { id: "games", label: "Games & Rooms", icon: "🚪" },
+        { id: "clues", label: "Clues", icon: "🔍" },
+        { section: "Intelligence" },
+        { id: "analytics", label: "Analytics", icon: "📊" },
+        { id: "playground", label: "SQL Playground", icon: "⌨️" },
+      ];
+
+      const PAGE_TITLES = {
+        dashboard: "Dashboard",
+        bookings: "Bookings",
+        sessions: "Sessions",
+        payments: "Payments",
+        customers: "Customers",
+        employees: "Employees",
+        hr: "HR Management",
+        games: "Games & Rooms",
+        clues: "Clues",
+        analytics: "Analytics",
+        playground: "SQL Playground",
+      };
+
+      function renderPage() {
+        switch (state.tab) {
+          case "dashboard":
+            return renderDashboard();
+          case "customers":
+            return renderCustomers();
+          case "employees":
+            return renderEmployees();
+          case "games":
+            return renderGamesRooms();
+          case "bookings":
+            return renderBookings();
+          case "sessions":
+            return renderSessions();
+          case "payments":
+            return renderPayments();
+          case "hr":
+            return renderHR();
+          case "clues":
+            return renderClues();
+          case "analytics":
+            return renderAnalytics();
+          case "playground":
+            return renderPlayground();
+          default:
+            return `<div class="empty-state"><div class="empty-icon">🔒</div><p>Page not found</p></div>`;
+        }
+      }
+
+      function render() {
+        const navHtml = NAV.map((item) => {
+          if (item.section)
+            return `<div class="nav-section-label">${item.section}</div>`;
+          return `<button class="nav-item ${state.tab === item.id ? "active" : ""}" onclick="navigate('${item.id}')">
+      <span class="icon">${item.icon}</span>${item.label}
+    </button>`;
+        }).join("");
+
+        const modalHtml = state.modal
+          ? `
+    <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+      <div class="modal">${state.modal}</div>
+    </div>`
+          : "";
+
+        const confirmHtml = state.confirmDialog
+          ? `
+    <div class="modal-backdrop">
+      <div class="modal confirm-dialog">
+        <div class="modal-header">
+          <div class="modal-title">${state.confirmDialog.title}</div>
+        </div>
+        <p style="color:var(--text-secondary);font-size:13.5px;line-height:1.6">${state.confirmDialog.msg}</p>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="state.confirmDialog.onCancel()">Cancel</button>
+          <button class="btn btn-danger" onclick="state.confirmDialog.onConfirm()">Confirm Delete</button>
+        </div>
+      </div>
+    </div>`
+          : "";
+
+        const toastHtml = state.toast
+          ? `<div class="toast ${state.toast.type}">${state.toast.msg}</div>`
+          : "";
+
+        document.getElementById("app").innerHTML = `
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">ER</div>
+        <div><div class="logo-text">Escape Room ERP</div><div class="logo-sub">CSE 4/560 — DMQL</div></div>
+      </div>
+      <nav class="sidebar-nav">${navHtml}</nav>
+      <div class="sidebar-footer">
+        <div class="db-badge">
+          <div class="db-dot"></div>
+          <span>PostgreSQL</span>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-title">${PAGE_TITLES[state.tab] || ""}</div>
+        <div class="topbar-right">
+          <span style="font-size:12px;color:var(--text-muted)">Escape Room ERP v1.0</span>
+        </div>
+      </div>
+      <div class="content">${renderPage()}</div>
+    </div>
+    ${modalHtml}${confirmHtml}${toastHtml}`;
+
+        // Restore query editor content
+        if (state.tab === "playground") {
+          const editor = document.getElementById("query-editor");
+          if (editor && playgroundState.editorContent)
+            editor.value = playgroundState.editorContent;
+          if (editor)
+            editor.addEventListener("input", () => {
+              playgroundState.editorContent = editor.value;
+            });
+        }
+      }
+
+      // ── Export CSV utility ────────────────────────────────────────────────────────
+      window.exportTable = function (name) {
+        const state_map = { customers: customersState, employees: empState };
+        const s = state_map[name];
+        if (!s || !s.data) return showToast("No data to export", "error");
+        const rows = s.data;
+        const keys = Object.keys(rows[0]);
+        const csv = [
+          keys.join(","),
+          ...rows.map((r) =>
+            keys.map((k) => JSON.stringify(r[k] ?? "")).join(","),
+          ),
+        ].join("\n");
+        const a = document.createElement("a");
+        a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+        a.download = `${name}_export.csv`;
+        a.click();
+        showToast(`${rows.length} rows exported`);
+      };
+
+      // ── Init ─────────────────────────────────────────────────────────────────────
+      render();
+    </script>
+  </body>
+</html>
